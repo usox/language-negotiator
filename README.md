@@ -14,7 +14,7 @@ composer require usox/language-negotiator
 
 There are several ways to use the negotiator.
 
-### With $_SERVER superglobal
+### With $_SERVER superglobal in constructor
 
 ```php
 use Usox\LanguageNegotiator\LanguageNegotiator;
@@ -28,7 +28,7 @@ $negotiator = new LanguageNegotiator(
 $clientLanguage = $negotiator->negotiate();
 ```
 
-### With an already obtained http header string
+### With an already obtained http headers array (or $_SERVER)
 
 ```php
 use Usox\LanguageNegotiator\LanguageNegotiator;
@@ -39,7 +39,7 @@ $negotiator = new LanguageNegotiator(
 );
 
 $clientLanguage = $negotiator->negotiate(
-    $acceptLanguageHeader
+    $_SERVER
 );
 ```
 

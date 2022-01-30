@@ -18,8 +18,8 @@ final class LanguageNegotiator implements LanguageNegotiatorInterface
     /** @var string Public name of the psr server request attribute */
     public const REQUEST_ATTRIBUTE_NAME = 'negotiated-request-language';
 
-    /** @var string Name of the http `accept language` header */
-    private const ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
+    /** @var array<string> List of allowed accept-language header names */
+    private const ACCEPT_LANGUAGE_HEADERS = ['accept-language', 'http_accept_language'];
 
     /**
      * @param array<string> $supportedLanguages List of language codes you application supports
@@ -39,24 +39,24 @@ final class LanguageNegotiator implements LanguageNegotiatorInterface
      * Negotiates the client language
      * If the serverRequest was set by constructor, the parameter can be omitted
      *
+     * @param array<string, mixed>|null $request Optional dict of server request variables; overwrites serverRequest defined in constructor
+     *
      * @return string language code of the negotiated client language
      */
     public function negotiate(
-        ?string $headerLine = null
+        ?array $request = null
     ): string {
         // return fallback if both, headerLine and serverRequest is not set
-        if ($headerLine === null && $this->serverRequest === null) {
+        $requestHeaders = $request ?? $this->serverRequest ?? null;
+
+        if ($requestHeaders === null) {
             return $this->fallbackLanguage;
         }
 
-        // determine which value we should use
-        $headerValue = $headerLine
-            ?? $this->serverRequest[self::ACCEPT_LANGUAGE_HEADER]
-            ?? ''
-        ;
+        $headerValue = $this->normalizeAcceptLanguageString($requestHeaders);
 
-        // return the fallback if the header is not a string
-        if (!is_string($headerValue)) {
+        // return the fallback if the header is not usable
+        if ($headerValue === null) {
             return $this->fallbackLanguage;
         }
 
@@ -98,9 +98,34 @@ final class LanguageNegotiator implements LanguageNegotiatorInterface
     ): ResponseInterface {
         $request = $request->withAttribute(
             $this->attributeName,
-            $this->negotiate($request->getHeaderLine(self::ACCEPT_LANGUAGE_HEADER))
+            $this->negotiate($request->getHeaders())
         );
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @param array<string, mixed> $headers
+     */
+    private function normalizeAcceptLanguageString(array $headers): ?string {
+        $headerValue = null;
+
+        // convert all keys to lowercase - just in case
+        $headers = array_change_key_case($headers);
+
+        // lookup all accepted header values
+        foreach (self::ACCEPT_LANGUAGE_HEADERS as $headerName) {
+            $headerValue = $headers[$headerName] ?? null;
+            if ($headerValue !== null) {
+                break;
+            }
+        }
+
+        // maybe something goes wrong and we end up with some other scalar values in here - jest ensure, it's a string
+        if (!is_string($headerValue)) {
+            return null;
+        }
+
+        return strtolower($headerValue);
     }
 }

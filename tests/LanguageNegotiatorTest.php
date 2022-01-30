@@ -27,7 +27,7 @@ class LanguageNegotiatorTest extends TestCase
 
         parent::assertSame(
             $expectedLanguage,
-            $subject->negotiate($headerLine)
+            $subject->negotiate(['HTTP_ACCEPT_LANGUAGE' => $headerLine])
         );
     }
 
@@ -44,7 +44,7 @@ class LanguageNegotiatorTest extends TestCase
         $subject = new LanguageNegotiator(
             $supportedLanguages,
             $fallbackLanguage,
-            ['Accept-Language' => $headerLine],
+            ['accept-language' => $headerLine],
         );
 
         parent::assertSame(
@@ -77,14 +77,17 @@ class LanguageNegotiatorTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
 
         $subject = new LanguageNegotiator(
-            ['en'],
+            ['en', 'de'],
             'en'
         );
 
         $request->expects($this->once())
             ->method('withAttribute')
-            ->with(LanguageNegotiator::REQUEST_ATTRIBUTE_NAME, 'en')
+            ->with(LanguageNegotiator::REQUEST_ATTRIBUTE_NAME, 'de')
             ->willReturn($requestWithLanguage);
+        $request->expects($this->once())
+            ->method('getHeaders')
+            ->willReturn(['accept-language' => 'de']);
 
         $handler->expects($this->once())
             ->method('handle')
