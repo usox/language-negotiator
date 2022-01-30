@@ -1,6 +1,6 @@
 [![Unittests](https://github.com/usox/language-negotiator/actions/workflows/php.yml/badge.svg)](https://github.com/usox/language-negotiator/actions/workflows/php.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/usox/language-negotiator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/usox/language-negotiator/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/usox/language-negotiator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/usox/language-negotiator/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/usox/language-negotiator/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/usox/language-negotiator/?branch=main)
+[![Code Coverage](https://scrutinizer-ci.com/g/usox/language-negotiator/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/usox/language-negotiator/?branch=main)
 
 # language-negotiator
 
