@@ -1,0 +1,45 @@
+{
+    "name": "usox/language-negotiator",
+    "description": "Negotiate http client language",
+    "type": "library",
+    "require": {
+        "php": "^8.0||^8.1",
+        "psr/http-server-middleware": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Usox\\LanguageNegotiator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Usox\\LanguageNegotiator\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Daniel Jakob",
+            "email": "github@usox.org"
+        }
+    ],
+    "scripts": {
+        "test": "phpunit --bootstrap vendor/autoload.php --testdox tests",
+        "coverage": "phpunit --warm-coverage-cache tests && XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html build/coverage tests",
+        "stan": "phpstan",
+        "qa": [
+            "@composer test",
+            "@composer stan"
+        ]
+    },
+    "scripts-descriptions": {
+        "test": "Execute unit tests",
+        "coverage": "Execute code coverage",
+        "stan": "Execute phpstan code analysis",
+        "qa": "Execute all QA related scripts"
+    }
+}
