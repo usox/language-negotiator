@@ -55,10 +55,11 @@ class LanguageNegotiatorTest extends TestCase
 
     public function languageDataProvider(): array {
         return [
-            [['en', 'de'], 'en', null, 'en'],
-            [[], 'de', null, 'de'],
-            [['en', 'fr'], 'de', 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5', 'fr'],
-            [['fr'], 'en-us', 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5', 'fr'],
+            [['en', 'de'], 'en', null, 'en'], // fallback if requested language is empty
+            [[], 'de', null, 'de'], // fallback if accepted languages is empty
+            [['fr'], 'de', 'fr-CH, en;q=0.9, fr;q=0.8, de;q=0.7, *;q=0.5', 'fr'], // request language is second of accepted
+            [['fr'], 'en-us', 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5', 'fr'], // requested language is first of accepted
+            [['de'], 'fr', 'en', 'fr'], // requested language not in list of accepted
         ];
     }
 
@@ -97,6 +98,18 @@ class LanguageNegotiatorTest extends TestCase
         $this->assertSame(
             $response,
             $subject->process($request, $handler)
+        );
+    }
+
+    public function testLanguageDetectionReturnsFallbackIfNoHeadersAreProvided(): void {
+        $subject = new LanguageNegotiator(
+            [],
+            'en'
+        );
+
+        parent::assertSame(
+            'en',
+            $subject->negotiate()
         );
     }
 }
