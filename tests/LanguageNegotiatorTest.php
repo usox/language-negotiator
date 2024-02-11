@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Usox\LanguageNegotiator;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -11,9 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LanguageNegotiatorTest extends TestCase
 {
-    /**
-     * @dataProvider languageDataProvider
-     */
+	#[DataProvider(methodName: 'languageDataProvider')]
     public function testLanguageDetectionWithNegotiateMethod(
         array $supportedLanguages,
         string $fallbackLanguage,
@@ -31,10 +30,8 @@ class LanguageNegotiatorTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider languageDataProvider
-     * @dataProvider invalidHeaderDataProvider
-     */
+	#[DataProvider(methodName: 'languageDataProvider')]
+	#[DataProvider(methodName: 'invalidHeaderDataProvider')]
     public function testLanguageDetectionWithServerDict(
         array $supportedLanguages,
         string $fallbackLanguage,
@@ -53,7 +50,7 @@ class LanguageNegotiatorTest extends TestCase
         );
     }
 
-    public function languageDataProvider(): array {
+    public static function languageDataProvider(): array {
         return [
             [['en', 'de'], 'en', null, 'en'], // fallback if requested language is empty
             [[], 'de', null, 'de'], // fallback if accepted languages is empty
@@ -63,7 +60,7 @@ class LanguageNegotiatorTest extends TestCase
         ];
     }
 
-    public function invalidHeaderDataProvider(): array {
+    public static function invalidHeaderDataProvider(): array {
         return [
             [[], 'en', [], 'en'],
             [[], 'en', 666, 'en'],
